@@ -1,0 +1,32 @@
+/*Menu*/
+<?xml version="1.0" encoding="utf-8"?>
+<Odoo>
+    <record id="" model="">
+        <field name="" type=""></field>
+    </record>
+
+
+    <record id="" model="">
+        <field name="" type="">
+            <tree>
+                <field name="">
+                </field>
+            </tree>
+        </field>
+    </record>
+
+    <record id="" model="">
+        <field name="" type="">
+            <field>
+                <field name="">
+                    <field/>
+                </field>
+            </field>
+        </field>
+    </record>
+
+
+    <data>
+        <menuItem id="" name="" sequence="" action=""></menuItem>
+    </data>
+</Odoo>
