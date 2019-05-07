@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="web_services" name="Web Services" page="True">
+        <style type="text/css">
+            #webserv
+            {
+            border-spacing: 10px;
+            border-collapse: separate;
+            }
+        </style>
+        <t t-call="website.layout">
+            <div class="container">
+                <div class="mt16 mb16">
+                    <h1 class="text-center support-main-title">Web Services</h1>
+                    <h4 class="text-center" t-if="request.env.user.partner_id.name != 'Public user'">
+                        <a href="/web-services/my">Mes demandes</a>
+                    </h4>
+                    <table class="text-center" id="webserv" cellspacing="10">
+                        <tbody>
+                            <tr>
+                                <td>Demande de passeport
+                                    <br/>
+                                    <a href="/web-services/create?type=Demande passeport">
+                                        <img src="pty_grc/static/src/img/passeport.jpg" width="100" height="70"/>
+                                    </a>
+                                </td>
+                                <td>Demande d'acte de naissance
+                                    <br/>
+                                    <a href="/web-services/create?type=Demande d'un acte de naissance">
+                                        <img src="pty_grc/static/src/img/passeport.jpg" width="100" height="70"/>
+                                    </a>
+                                </td>
+                                <td>Autorisation stationnement</td>
+                                <td>Préinscription scolaire</td>
+                                <td>Demande de débit de boisson</td>
+                                <td>Demande d'autorisation de solde</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="my_web_services" name="My Web Services" page="True">
+        <style type="text/css">
+            #webserv
+            {
+
+            }
+        </style>
+        <t t-call="website.layout">
+            <div class="container">
+                <div class="mt16 mb16">
+                    <h1 class="text-center support-main-title">My Web Services</h1>
+                    <table class="text-center table" id="webserv" cellspacing="10">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Create date</th>
+                                <th>State</th>
+                                <th>Service</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="my_tickets" t-as="ticket">
+                                <tr t-att-class="'danger' if ticket.state.id == 3 else ''">
+                                    <td>
+                                        <span t-field="ticket.subject"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="ticket.create_date"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="ticket.state"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="ticket.service_id"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="web_services_create" name="Create Web Services" page="True">
+        <style type="text/css">
+
+        </style>
+        <t t-call="website.layout">
+            <div class="container">
+                <div class="mt16 mb16">
+                    <h1 class="text-center support-main-title">
+                        <t t-esc="type.name"/>
+                    </h1>
+                    <h4 class="text-center">
+                        <p>Pour faire une demande balala</p>
+                    </h4>
+                    <form action="/web-services/create" method="post" class="form-group">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                        <label class="control-label" for="service">Type</label>
+                        <input type="text" name="service" class="form-control" size="10"
+                               t-att-value="type.name"/>
+
+                        <label class="control-label" for="subject">Sujet</label>
+                        <input type="text" name="subject" class="form-control" size="10"/>
+
+                        <div class="col-md-offset-3 col-sm-offset-4 col-sm-8 col-md-7">
+                            <button class="btn btn-primary btn-lg">Submit Ticket</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,76 @@
+<odoo>
+    <record id="website_support_dashboard" model="ir.ui.view">
+        <field name="name">website.support.dashboard</field>
+        <field name="model">website.support.ticket.service</field>
+        <field name="arch" type="xml">
+            <kanban class="oe_background_grey o_kanban_dashboard o_project_kanban" on_create="project.open_create_project">
+                    <field name="name"/>
+                    <field name="email"/>
+                    <field name="ticket_count"/>
+                    <field name="ticket_urgent_count"/>
+                    <field name="my_ticket_count"/>
+                    <!--<field name="color"/>-->
+                    <!--<field name="task_count"/>-->
+                    <!--<field name="task_needaction_count"/>-->
+                    <!--<field name="label_tasks"/>-->
+                    <!--<field name="alias_id"/>-->
+                    <!--<field name="alias_name"/>-->
+                    <!--<field name="alias_domain"/>-->
+                    <!--<field name="doc_count"/>-->
+                    <!--<field name="is_favorite"/>-->
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_global_click">
+                                <div class="o_project_kanban_main">
+                                    <div class="o_kanban_card_content o_visible">
+                                        <div class="o_kanban_primary_left">
+                                            <div class="o_primary">
+                                                <span><t t-esc="record.name.value"/></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="o_kanban_card_manage_pane o_invisible">
+                                        <div class="o_kanban_card_manage_section o_kanban_manage_reports">
+                                            <div>
+                                                <a type="edit">Settings</a>
+                                            </div>
+                                            <div>
+                                                <a>Tasks</a>
+                                            </div>
+                                        </div>
+                                        <!--<div t-if="widget.editable" class="o_project_kanban_colorpicker">-->
+                                            <!--<ul class="oe_kanban_colorpicker" data-field="color"/>-->
+                                        <!--</div>-->
+                                    </div>
+                                    <div class="o_project_kanban_manage">
+                                        <a class="o_kanban_manage_toggle_button o_left" href="#">More <i class="fa fa-caret-down"/></a>
+                                    </div>
+                                </div>
+
+                                <div class="o_project_kanban_boxes">
+                                    <div class="o_project_kanban_box">
+                                        <a name="%(pty_grc.website_support_ticket_main_action)d" type="action" context="{'search_default_state': 1}">
+                                            <span class="o_value"><t t-esc="record.ticket_count.value"/></span>
+                                            <span class="o_label">Open</span>
+                                        </a>
+                                    </div>
+                                    <div class="o_project_kanban_box">
+                                        <a name="%(pty_grc.website_support_ticket_main_action)d" type="action" context="{'search_default_state': 5}">
+                                            <span class="o_value"><t t-esc="record.ticket_urgent_count.value"/></span>
+                                            <span class="o_label">Urgent</span>
+                                        </a>
+                                    </div>
+                                    <div class="o_project_kanban_box">
+                                        <a name="%(pty_grc.website_support_ticket_main_action)d" type="action" context="{'search_default_user_id': uid}">
+                                            <span class="o_value"><t t-esc="record.my_ticket_count.value"/></span>
+                                            <span class="o_label">My tickets</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+        </field>
+    </record>
+</odoo>

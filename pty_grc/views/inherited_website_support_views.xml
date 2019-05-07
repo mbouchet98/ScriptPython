@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="website_support.support_ticket_new" model="mail.template">
+        <field name="name">Support Ticket New</field>
+        <field name="model_id" ref="website_support.model_website_support_ticket"></field>
+        <field name="email_from"><![CDATA[${object.company_id.name} <${object.company_id.email}>]]></field>
+        <field name="email_to">${object.service_id.email|safe}</field>
+        <field name="subject">We have received your support ticket '${object.subject}' and will get back to you
+            shortly
+        </field>
+        <field name="auto_delete" eval="False"/>
+        <field name="built_in" eval="True"/>
+        <field name="body_html"><![CDATA[
+                % if object.person_name :
+                    <p>Dear ${object.person_name},</p>
+                % endif
+                <p>Thank you for submitting a support ticket to us, we will get back to your shortly</p>
+                <hr/>
+                <b>View Ticket Online:</b> <a href="/support/portal/ticket/view/${object.portal_access_key}">here</a><br/>
+                <b>Ticket Number:</b> ${object.ticket_number or object.id}<br/>
+                <b>Ticket Category:</b>
+                % if object.category.name :
+                    ${object.category.name}
+                % endif
+                <br/>
+                <b>Ticket Description:</b><br/>
+                ${object.description|safe}
+
+            ]]>
+        </field>
+    </record>
+
+    <record id="website_support_ticket_view_form" model="ir.ui.view">
+        <field name="name">website.support.ticket.form.view</field>
+        <field name="model">website.support.ticket</field>
+        <field name="inherit_id" ref="website_support.website_support_ticket_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="state" widget="statusbar" clickable="True"/>
+            </xpath>
+            <xpath expr="//sheet" position="replace">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="ticket_number"/>
+                        <h1>
+                            <field name="ticket_number" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group col="4">
+                        <field name="subject"/>
+                        <field name="user_id"/>
+                    </group>
+                    <group>
+                        <field name="priority_id"/>
+                        <field name="delay"/>
+                        <field name="category"/>
+                        <field name="sub_category_id" domain="[('parent_category_id','=',category)]"/>
+                        <field name="other_field_ids">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="value"/>
+                            </tree>
+                        </field>
+                        <field name="attachment" filename="attachment_filename"
+                               attrs="{'invisible' :[('attachment', '=', False)]}"/>
+                        <field name="attachment_filename" invisible="True"/>
+                        <field name="attachment_ids" attrs="{'invisible' :[('attachment_ids', '=', [])]}">
+                            <tree>
+                                <field name="datas_fname"/>
+                                <field name="datas"/>
+                            </tree>
+                        </field>
+                        <field name="extra_field_ids" attrs="{'invisible' :[('extra_field_ids', '=', [])]}">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="value"/>
+                            </tree>
+                        </field>
+                        <field name="description" widget="html"/>
+                        <field name="support_rating" readonly="1"/>
+                        <field name="support_comment" readonly="1"/>
+                        <field name="close_comment"/>
+                        <field name="close_time"/>
+                    </group>
+                    <notebook>
+                        <page name="citizen" string="Citizen">
+                            <group>
+                                <field name="create_user_id"/>
+                                <field name="partner_id"/>
+                                <field name="person_name"/>
+                                <field name="email"/>
+                            </group>
+                        </page>
+                        <page name="services" string="Required Services">
+                            <group>
+                                <field name="service_id"/>
+                                <field name="additionnal_service_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                        <page name="related_tickets" string="Related tickets" groups="pty_grc.group_parthenay">
+                            <group>
+                                <field name="parent_ticket_id"/>
+                                <field name="related_ticket_ids"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="website_support_ticket_view_tree" model="ir.ui.view">
+        <field name="name">website.support.ticket.tree.view</field>
+        <field name="model">website.support.ticket</field>
+        <field name="inherit_id" ref="website_support.website_support_ticket_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="ticket_number_display" position="after">
+                <field name="user_id"/>
+                <field name="service_id"/>
+            </field>
+            <field name="email" position="replace">
+            </field>
+        </field>
+    </record>
+
+    <record id="website_support_ticket_view_search" model="ir.ui.view">
+        <field name="name">website.support.ticket.form.search</field>
+        <field name="model">website.support.ticket</field>
+        <field name="inherit_id" ref="website_support.website_support_ticket_view_search"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="ticket_number"/>
+                <field name="service_id"/>
+                <field name="priority_id"/>
+                <field name="state"/>
+                <field name="user_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="website_support_ticket_main_action" model="ir.actions.act_window">
+        <field name="name">Support Tickets</field>
+        <field name="res_model">website.support.ticket</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="context">{'search_default_service_id': active_id,}</field>
+        <field name="help" type="html">
+            <p>
+                No Support Tickets found
+            </p>
+        </field>
+    </record>
+
+    <record id="website_support_ticket_dashboard_action" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">website.support.ticket.service</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="context">{'auto_refresh': 1, 'default_create_user_id': uid}</field>
+        <field name="help" type="html">
+            <p>
+                No Support Tickets found
+            </p>
+        </field>
+    </record>
+
+    <data>
+        <menuitem id="website_support.website_support_dashboard_menu" name="Dashboard"
+                  parent="website_support.website_support_parent_menu"
+                  action="pty_grc.website_support_ticket_dashboard_action"
+                  sequence="1"/>
+        <menuitem id="website_support.website_support_parent_menu" name="Customer Support"
+                  sequence="2"/>
+        <menuitem id="website_support.website_support_ticket_menu" name="Support Tickets"
+                  parent="website_support.website_support_parent_menu"
+                  action="website_support.website_support_ticket_action" sequence="10"/>
+        <menuitem id="website_support.website_support_config_parent_menu" name="Configuration"
+                  parent="website_support.website_support_parent_menu"
+                  sequence="80"/>
+
+    </data>
+</odoo>
